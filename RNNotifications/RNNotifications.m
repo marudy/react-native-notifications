@@ -30,9 +30,9 @@ NSString* const RNNotificationReceivedBackground = @"RNNotificationReceivedBackg
 NSString* const RNNotificationOpened = @"RNNotificationOpened";
 NSString* const RNNotificationActionTriggered = @"RNNotificationActionTriggered";
 
-/*
- * Converters for Interactive Notifications
- */
+
+#pragma mark - Converters for Interactive Notifications
+
 @implementation RCTConvert (UIUserNotificationActivationMode)
 RCT_ENUM_CONVERTER(UIUserNotificationActivationMode, (@{
                                                         @"foreground": @(UIUserNotificationActivationModeForeground),
@@ -171,6 +171,9 @@ static NSDictionary *RCTFormatUNNotification(UNNotification *notification)
   return formattedNotification;
 }
 
+
+#pragma mark - RNNotifications
+
 @implementation RNNotifications
 
 RCT_EXPORT_MODULE()
@@ -225,9 +228,9 @@ RCT_EXPORT_MODULE()
     [RNNotificationsBridgeQueue sharedInstance].openedLocalNotification = [_bridge.launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
 }
 
-/*
- * Public Methods
- */
+
+#pragma mark - Public methods
+
 + (void)didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
 {
     if ([UIApplication instancesRespondToSelector:@selector(registerForRemoteNotifications)]) {
@@ -316,9 +319,10 @@ RCT_EXPORT_MODULE()
     [self emitNotificationActionForIdentifier:identifier responseInfo:responseInfo userInfo:userInfo completionHandler:completionHandler];
 }
 
-/*
- * Notification handlers
- */
+
+
+#pragma mark - Notification handlers
+ 
 + (void)didReceiveNotificationOnForegroundState:(NSDictionary *)notification
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:RNNotificationReceivedForeground
@@ -357,9 +361,10 @@ RCT_EXPORT_MODULE()
                                                       userInfo:notification];
 }
 
-/*
- * Helper methods
- */
+
+
+#pragma mark - Helper methods
+
 + (void)dispatchLocalNotificationFromNotification:(NSDictionary *)notification
 {
     NSDictionary* managedAps  = [notification objectForKey:@"managedAps"];
@@ -481,9 +486,10 @@ RCT_EXPORT_MODULE()
     [RNNotifications didReceiveRemoteNotification:payload.dictionaryPayload];
 }
 
-/*
- * Javascript events
- */
+
+
+#pragma mark - Javascript events
+
 - (void)handleNotificationsRegistered:(NSNotification *)notification
 {
     [_bridge.eventDispatcher sendDeviceEventWithName:@"remoteNotificationsRegistered" body:notification.userInfo];
@@ -519,9 +525,10 @@ RCT_EXPORT_MODULE()
     [_bridge.eventDispatcher sendAppEventWithName:@"notificationActionReceived" body:notification.userInfo];
 }
 
-/*
- * React Native exported methods
- */
+
+
+#pragma mark - React Native exported methods
+
 RCT_EXPORT_METHOD(requestPermissionsWithCategories:(NSArray *)json)
 {
     NSMutableSet* categories = nil;
