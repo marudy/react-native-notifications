@@ -291,6 +291,15 @@ RCT_EXPORT_MODULE()
     }
 }
 
++ (void)didReceiveNotificationResponse:(UNNotificationResponse *)response
+{
+    if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier]) {
+        UNNotification* notification = response.notification;
+        NSDictionary* formattedNotification = RCTFormatUNNotification(notification);
+        [self didNotificationOpen:formattedNotification];
+    }
+}
+
 + (void)handleActionWithIdentifier:(NSString *)identifier forLocalNotification:(UILocalNotification *)notification withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void (^)())completionHandler
 {
     [self emitNotificationActionForIdentifier:identifier responseInfo:responseInfo userInfo:notification.userInfo completionHandler:completionHandler];
