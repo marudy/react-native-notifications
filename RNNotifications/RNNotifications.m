@@ -272,6 +272,12 @@ RCT_EXPORT_MODULE()
     }
 }
 
++ (void)didReceiveRemoteUNNotification:(UNNotification *)notification
+{
+    NSDictionary* formattedNotification = RCTFormatUNNotification(notification);
+    [self didReceiveRemoteNotification:formattedNotification];
+}
+
 + (void)didReceiveLocalNotification:(UILocalNotification *)notification
 {
     UIApplicationState state = [UIApplication sharedApplication].applicationState;

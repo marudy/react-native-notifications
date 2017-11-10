@@ -16,6 +16,7 @@
 + (void)didUpdatePushCredentials:(PKPushCredentials *)credentials forType:(NSString *)type;
 
 + (void)didReceiveRemoteNotification:(NSDictionary *)notification;
++ (void)didReceiveRemoteUNNotification:(UNNotification *)notification;
 + (void)didReceiveLocalNotification:(UILocalNotification *)notification;
 
 + (void)didReceiveNotificationResponse:(UNNotificationResponse *)response;
