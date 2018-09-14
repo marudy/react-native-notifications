@@ -1,19 +1,11 @@
 
 #import <UIKit/UIKit.h>
 #import <PushKit/PushKit.h>
-#if __has_include(<React/RCTBridge.h>)
-  #import <React/RCTBridge.h>
-  #import <React/RCTEventDispatcher.h>
-  #import "RNNotifications.h"
-  #import <React/RCTConvert.h>
-  #import <React/RCTUtils.h>
-#else
-  #import "RCTBridge.h"
-  #import "RCTEventDispatcher.h"
-  #import "RNNotifications.h"
-  #import "RCTConvert.h"
-  #import "RCTUtils.h"
-#endif
+#import <React/RCTBridge.h>
+#import <React/RCTEventDispatcher.h>
+#import "RNNotifications.h"
+#import <React/RCTConvert.h>
+#import <React/RCTUtils.h>
 #import "RNNotificationsBridgeQueue.h"
 #import <UserNotifications/UserNotifications.h>
 
@@ -225,7 +217,8 @@ RCT_EXPORT_MODULE()
                                                object:nil];
 
     [RNNotificationsBridgeQueue sharedInstance].openedRemoteNotification = [_bridge.launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-    [RNNotificationsBridgeQueue sharedInstance].openedLocalNotification = [_bridge.launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+    UILocalNotification *localNotification = [_bridge.launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
+    [RNNotificationsBridgeQueue sharedInstance].openedLocalNotification = localNotification ? localNotification.userInfo : nil;
 }
 
 
@@ -543,6 +536,17 @@ RCT_EXPORT_METHOD(requestPermissionsWithCategories:(NSArray *)json)
     [RNNotifications requestPermissionsWithCategories:categories];
 }
 
+RCT_EXPORT_METHOD(getInitialNotification:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
+{
+    NSDictionary * notification = nil;
+    notification = [RNNotificationsBridgeQueue sharedInstance].openedRemoteNotification ?
+        [RNNotificationsBridgeQueue sharedInstance].openedRemoteNotification :
+        [RNNotificationsBridgeQueue sharedInstance].openedLocalNotification;
+    [RNNotificationsBridgeQueue sharedInstance].openedRemoteNotification = nil;
+    [RNNotificationsBridgeQueue sharedInstance].openedLocalNotification = nil;
+    resolve(notification);
+}
+
 RCT_EXPORT_METHOD(log:(NSString *)message)
 {
     NSLog(message);
@@ -561,6 +565,12 @@ RCT_EXPORT_METHOD(abandonPermissions)
 RCT_EXPORT_METHOD(registerPushKit)
 {
     [RNNotifications registerPushKit];
+}
+
+RCT_EXPORT_METHOD(getBadgesCount:(RCTResponseSenderBlock)callback)
+{
+    NSInteger count = [UIApplication sharedApplication].applicationIconBadgeNumber;
+    callback(@[ [NSNumber numberWithInteger:count] ]);
 }
 
 RCT_EXPORT_METHOD(setBadgesCount:(int)count)
