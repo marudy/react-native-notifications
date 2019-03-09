@@ -23,6 +23,11 @@ public class FcmInstanceIdListenerService extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage message){
         Bundle bundle = message.toIntent().getExtras();
         Log.d(LOGTAG, "New message from GCM: " + bundle);
+        /* Modifications so that Android native push modal works along with Braze's payload object structure */
+        // Retrieve message title from bundle and put it back to bundle as it is expected from this package. Key "t" is retrieved and key "title" is added
+        bundle.putString("title", bundle.getString("t"));
+        // Retrieve message body from bundle and put it back to bundle as it is expected from this package. Key "a" is retrieved and key "body" is added
+        bundle.putString("body", bundle.getString("a"));
 
         try {
             final IPushNotification notification = PushNotification.get(getApplicationContext(), bundle);
