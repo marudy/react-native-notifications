@@ -81,7 +81,7 @@ public class PushNotification implements IPushNotification {
             if (mAppLifecycleFacade.isAppVisible()) {
                 notifiyReceivedForegroundNotificationToJS();
             }
-        } catch (InvalidNotificationException ex) {
+        } catch (Exception ex) {
             Log.d(LOGTAG, "Exception while received push notification: " + ex.getMessage());
         }
     }
